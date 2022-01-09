@@ -4,15 +4,17 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.wing.tree.reptile.tree.domain.model.Profile
-import com.wing.tree.reptile.tree.eventbus.OnBackPressedEventBus
+import com.wing.tree.reptile.tree.presentation.eventbus.OnBackPressedEventBus
 import com.wing.tree.reptile.tree.presentation.R
 import com.wing.tree.reptile.tree.presentation.databinding.FragmentCreateProfileBinding
 import com.wing.tree.reptile.tree.presentation.view.base.BaseFragment
@@ -24,15 +26,19 @@ import dagger.hilt.android.AndroidEntryPoint
 class CreateProfileFragment : BaseFragment<FragmentCreateProfileBinding>() {
     private val viewModel by viewModels<CreateProfileViewModel>()
 
+    private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            pickProfilePicture()
+        }
+    }
+
     private val startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
             val data = activityResult.data?.data ?: return@registerForActivityResult
 
             when(data.scheme) {
                 "content" -> {
-                    writeFileToAppSpecificStorage(requireContext(), data)?.let {
-                        viewModel.setProfilePictureFile(it)
-                    }
+                    viewModel.setProfilePictureFileUri(data)
                 }
                 "file" -> {
 
@@ -41,11 +47,7 @@ class CreateProfileFragment : BaseFragment<FragmentCreateProfileBinding>() {
         }
     }
 
-    private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            pickProfilePicture()
-        }
-    }
+    private var profilePictureFileUri = Uri.EMPTY
 
     override fun inflate(
         inflater: LayoutInflater,
@@ -71,11 +73,11 @@ class CreateProfileFragment : BaseFragment<FragmentCreateProfileBinding>() {
 
     private fun bind() {
         with(viewBinding) {
-            toolbar.setNavigationOnClickListener {
+            materialToolbar.setNavigationOnClickListener {
                 OnBackPressedEventBus.callOnBackPressed()
             }
 
-            toolbar.setOnMenuItemClickListener {
+            materialToolbar.setOnMenuItemClickListener {
                 when(it.itemId) {
                     R.id.menu_complete -> {
                         if (checkRequiredValue()) {
@@ -99,11 +101,13 @@ class CreateProfileFragment : BaseFragment<FragmentCreateProfileBinding>() {
     }
 
     private fun observe() {
-        viewModel.profilePictureFile.observe(viewLifecycleOwner) {
+        viewModel.profilePictureFileUri.observe(viewLifecycleOwner) {
             Glide.with(requireContext())
-                .load(it.path)
+                .load(it)
                 .transform(CenterCrop())
                 .into(viewBinding.imageViewProfilePicture)
+
+            profilePictureFileUri = it
         }
     }
 
@@ -120,11 +124,14 @@ class CreateProfileFragment : BaseFragment<FragmentCreateProfileBinding>() {
     private fun insertProfile() {
         with(viewBinding) {
             val name = textInputLayoutName.editText?.text.toString()
+            val file = writeFileToAppSpecificStorage(requireContext(), profilePictureFileUri)
 
             viewModel.insertProfile(object : Profile() {
                 override val name = name
-                override val photo = viewModel.profilePictureFile.value?.absolutePath ?: ""
+                override val profilePictureUri = file?.toUri() ?: Uri.EMPTY
             })
+
+            OnBackPressedEventBus.callOnBackPressed()
         }
     }
 

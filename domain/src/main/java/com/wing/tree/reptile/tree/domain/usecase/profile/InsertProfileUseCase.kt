@@ -11,7 +11,7 @@ class InsertProfileUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
     @IOCoroutineDispatcher coroutineDispatcher: CoroutineDispatcher
 ) : UseCase<InsertProfileUseCase.Parameter, Unit>(coroutineDispatcher) {
-    override suspend fun execute(parameter: Parameter): Unit {
+    override suspend fun execute(parameter: Parameter) {
         profileRepository.insert(parameter.profile)
     }
 

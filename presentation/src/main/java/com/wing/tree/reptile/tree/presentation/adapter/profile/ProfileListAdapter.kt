@@ -10,7 +10,7 @@ import com.wing.tree.reptile.tree.domain.model.Profile
 import com.wing.tree.reptile.tree.presentation.databinding.ProfileListItemBinding
 
 class ProfileListAdapter(
-    private val onClick: (viewBinding: ProfileListItemBinding, item: Profile, adapterPosition: Int) -> Unit
+    private val onClick: (viewBinding: ProfileListItemBinding, item: Profile) -> Unit
 ) : ListAdapter<Profile, ProfileListAdapter.ViewHolder>(DiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val viewBinding = ProfileListItemBinding.inflate(
@@ -30,14 +30,14 @@ class ProfileListAdapter(
         fun bind(item: Profile) {
             with(viewBinding) {
                 Glide.with(imageViewProfilePicture)
-                    .load(item.photo)
+                    .load(item.profilePictureUri)
                     .centerCrop()
                     .into(imageViewProfilePicture)
 
                 textViewName.text = item.name
 
                 root.setOnClickListener {
-                    onClick(this, item, adapterPosition)
+                    onClick(this, item)
                 }
             }
         }

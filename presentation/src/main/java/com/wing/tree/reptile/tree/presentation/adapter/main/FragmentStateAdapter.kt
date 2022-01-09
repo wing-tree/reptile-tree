@@ -2,7 +2,6 @@ package com.wing.tree.reptile.tree.presentation.adapter.main
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.wing.tree.reptile.tree.presentation.view.calendar.MonthPagerFragment
 import com.wing.tree.reptile.tree.presentation.view.profile.ProfileListFragment
 
 class FragmentStateAdapter(fragment: Fragment): FragmentStateAdapter(fragment) {
@@ -11,12 +10,11 @@ class FragmentStateAdapter(fragment: Fragment): FragmentStateAdapter(fragment) {
     override fun createFragment(position: Int): Fragment {
         return when(position) {
             0 -> ProfileListFragment()
-            1 -> MonthPagerFragment()
             else -> throw IllegalStateException("position :$position")
         }
     }
 
     companion object {
-        private const val ITEM_COUNT = 2
+        private const val ITEM_COUNT = 1
     }
 }

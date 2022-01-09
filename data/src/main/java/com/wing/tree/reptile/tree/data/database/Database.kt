@@ -5,8 +5,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.wing.tree.reptile.tree.data.dao.ProfileDao
 import com.wing.tree.reptile.tree.data.entity.Profile
+import com.wing.tree.reptile.tree.data.typeconverters.TypeConverters
 
 @androidx.room.Database(entities = [Profile::class], exportSchema = false, version = 1)
+@androidx.room.TypeConverters(TypeConverters::class)
 abstract class Database: RoomDatabase() {
     abstract fun profileDao(): ProfileDao
 

@@ -21,22 +21,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bind()
-
-        setExitSharedElementCallback(object : SharedElementCallback() {
-            override fun onMapSharedElements(
-                names: MutableList<String>?,
-                sharedElements: MutableMap<String, View>?
-            ) {
-
-                Log.d("sjk", "a;;;: $names")
-            }
-        })
     }
 
     private object Tab {
         val textArray = arrayOf(
-            R.string.home,
-            R.string.calendar
+            R.string.home
         )
     }
 

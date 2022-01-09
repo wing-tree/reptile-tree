@@ -1,4 +1,4 @@
-package com.wing.tree.reptile.tree.eventbus
+package com.wing.tree.reptile.tree.presentation.eventbus
 
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject

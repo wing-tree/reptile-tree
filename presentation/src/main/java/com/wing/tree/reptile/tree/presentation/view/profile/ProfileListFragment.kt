@@ -7,10 +7,11 @@ import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.wing.tree.reptile.tree.presentation.Key
+import com.wing.tree.reptile.tree.presentation.Extra
 import com.wing.tree.reptile.tree.presentation.TransitionName
 import com.wing.tree.reptile.tree.presentation.adapter.profile.ProfileListAdapter
 import com.wing.tree.reptile.tree.presentation.databinding.FragmentProfileListBinding
@@ -19,21 +20,20 @@ import com.wing.tree.reptile.tree.presentation.view.base.BaseFragment
 import com.wing.tree.reptile.tree.presentation.view.main.MainFragmentDirections
 import com.wing.tree.reptile.tree.presentation.viewmodel.profile.ProfileListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ProfileListFragment : BaseFragment<FragmentProfileListBinding>() {
     private val viewModel by viewModels<ProfileListViewModel>()
 
     private val profileListAdapter by lazy {
-        ProfileListAdapter { viewBinding, item, adapterPosition ->
-            selectedAdapterPosition = adapterPosition
-
+        ProfileListAdapter { viewBinding, item ->
             with(viewBinding) {
                 imageViewProfilePicture.transitionName = TransitionName.PROFILE_PHOTO
                 textViewName.transitionName = TransitionName.NAME
 
                 val intent = Intent(context, ProfileActivity::class.java).apply {
-                    putExtra(Key.PARCELABLE_PROFILE, ParcelableProfile.from(item))
+                    putExtra(Extra.PARCELABLE_PROFILE, ParcelableProfile.from(item))
                 }
 
                 val activityOptions = ActivityOptions.makeSceneTransitionAnimation(
@@ -46,8 +46,6 @@ class ProfileListFragment : BaseFragment<FragmentProfileListBinding>() {
             }
         }
     }
-
-    private var selectedAdapterPosition = -1
 
     override fun inflate(inflater: LayoutInflater, container: ViewGroup?): FragmentProfileListBinding {
         return FragmentProfileListBinding.inflate(inflater, container, false)
