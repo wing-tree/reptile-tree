@@ -26,5 +26,9 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.wing.tree.reptile.tree.presentation.view.profile.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment" >
+        <argument
+            android:name="parcelableProfile"
+            app:argType="com.wing.tree.reptile.tree.presentation.parcelable.ParcelableProfile" />
+    </fragment>
 </navigation>
