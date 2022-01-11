@@ -1,10 +1,8 @@
 package com.wing.tree.reptile.tree.domain.model
 
-import android.net.Uri
-
 abstract class Profile {
     abstract val name: String
-    abstract val profilePictureUri: Uri
+    abstract val imageFilePath: String
 
     open val id: Long = 0L
 
@@ -13,7 +11,7 @@ abstract class Profile {
         if (other !is Profile) return false
 
         if (name != other.name) return false
-        if (profilePictureUri != other.profilePictureUri) return false
+        if (imageFilePath != other.imageFilePath) return false
         if (id != other.id) return false
 
         return true
@@ -21,7 +19,7 @@ abstract class Profile {
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + profilePictureUri.hashCode()
+        result = 31 * result + imageFilePath.hashCode()
         result = 31 * result + id.hashCode()
         return result
     }

@@ -9,17 +9,17 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.wing.tree.reptile.tree.domain.model.Profile
-import com.wing.tree.reptile.tree.presentation.eventbus.OnBackPressedEventBus
 import com.wing.tree.reptile.tree.presentation.R
+import com.wing.tree.reptile.tree.presentation.constant.BLANK
 import com.wing.tree.reptile.tree.presentation.databinding.FragmentCreateProfileBinding
+import com.wing.tree.reptile.tree.presentation.eventbus.OnBackPressedEventBus
+import com.wing.tree.reptile.tree.presentation.util.writeFileToAppSpecificStorage
 import com.wing.tree.reptile.tree.presentation.view.base.BaseFragment
 import com.wing.tree.reptile.tree.presentation.viewmodel.profile.CreateProfileViewModel
-import com.wing.tree.reptile.tree.presentation.writeFileToAppSpecificStorage
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -38,7 +38,7 @@ class CreateProfileFragment : BaseFragment<FragmentCreateProfileBinding>() {
 
             when(data.scheme) {
                 "content" -> {
-                    viewModel.setProfilePictureFileUri(data)
+                    viewModel.setImageFileUri(data)
                 }
                 "file" -> {
 
@@ -47,7 +47,7 @@ class CreateProfileFragment : BaseFragment<FragmentCreateProfileBinding>() {
         }
     }
 
-    private var profilePictureFileUri = Uri.EMPTY
+    private var imageFileUri = Uri.EMPTY
 
     override fun inflate(
         inflater: LayoutInflater,
@@ -101,13 +101,13 @@ class CreateProfileFragment : BaseFragment<FragmentCreateProfileBinding>() {
     }
 
     private fun observe() {
-        viewModel.profilePictureFileUri.observe(viewLifecycleOwner) {
+        viewModel.imageFileUri.observe(viewLifecycleOwner) {
             Glide.with(requireContext())
                 .load(it)
                 .transform(CenterCrop())
                 .into(viewBinding.imageViewProfilePicture)
 
-            profilePictureFileUri = it
+            imageFileUri = it
         }
     }
 
@@ -124,11 +124,11 @@ class CreateProfileFragment : BaseFragment<FragmentCreateProfileBinding>() {
     private fun insertProfile() {
         with(viewBinding) {
             val name = textInputLayoutName.editText?.text.toString()
-            val file = writeFileToAppSpecificStorage(requireContext(), profilePictureFileUri)
+            val file = writeFileToAppSpecificStorage(requireContext(), imageFileUri)
 
             viewModel.insertProfile(object : Profile() {
                 override val name = name
-                override val profilePictureUri = file?.toUri() ?: Uri.EMPTY
+                override val imageFilePath = file?.path ?: BLANK
             })
 
             OnBackPressedEventBus.callOnBackPressed()

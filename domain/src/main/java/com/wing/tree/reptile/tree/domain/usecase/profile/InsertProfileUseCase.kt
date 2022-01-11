@@ -15,7 +15,5 @@ class InsertProfileUseCase @Inject constructor(
         profileRepository.insert(parameter.profile)
     }
 
-    data class Parameter(
-        val profile: Profile
-    )
+    data class Parameter(val profile: Profile)
 }

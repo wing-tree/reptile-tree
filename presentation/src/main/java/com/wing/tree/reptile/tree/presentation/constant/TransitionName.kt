@@ -1,6 +1,6 @@
-package com.wing.tree.reptile.tree.presentation
+package com.wing.tree.reptile.tree.presentation.constant
 
-object TransitionName {
+internal object TransitionName {
     private const val PACKAGE_NAME = "com.wing.tree.reptile.tree.presentation"
     private const val OBJECT_NAME = "TransitionName"
 

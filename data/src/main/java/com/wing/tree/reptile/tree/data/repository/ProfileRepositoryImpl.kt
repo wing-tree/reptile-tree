@@ -7,8 +7,8 @@ import com.wing.tree.reptile.tree.domain.repository.ProfileRepository
 import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(private val dataSource: ProfileDataSource) : ProfileRepository {
-    override suspend fun all(): List<Profile> {
-        return dataSource.all()
+    override suspend fun profileList(): List<Profile> {
+        return dataSource.profileList()
     }
 
     override suspend fun insert(profile: Profile) {

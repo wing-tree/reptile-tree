@@ -1,4 +1,4 @@
-package com.wing.tree.reptile.tree.presentation
+package com.wing.tree.reptile.tree.presentation.constant
 
 internal object Key {
     private const val PACKAGE_NAME = "com.wing.tree.reptile.tree.presentation"

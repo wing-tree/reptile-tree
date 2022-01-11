@@ -13,24 +13,25 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.transition.TransitionInflater
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.wing.tree.reptile.tree.presentation.Key
+import androidx.core.net.toUri
+import androidx.fragment.app.viewModels
 import com.wing.tree.reptile.tree.presentation.R
-import com.wing.tree.reptile.tree.presentation.TransitionName
-import com.wing.tree.reptile.tree.presentation.adapter.diary.DiaryAdapter
+import com.wing.tree.reptile.tree.presentation.adapter.diary.EditDiaryAdapter
+import com.wing.tree.reptile.tree.presentation.constant.Key
 import com.wing.tree.reptile.tree.presentation.databinding.FragmentWriteDiaryBinding
-import com.wing.tree.reptile.tree.presentation.eventbus.OnBackPressedEventBus
 import com.wing.tree.reptile.tree.presentation.parcelable.ParcelableProfile
+import com.wing.tree.reptile.tree.presentation.util.writeFileToAppSpecificStorage
 import com.wing.tree.reptile.tree.presentation.view.base.BaseFragment
 import com.wing.tree.reptile.tree.presentation.view.base.LinearLayoutManagerWrapper
-import com.wing.tree.reptile.tree.presentation.view.base.SingleChoiceDialogFragment
+import com.wing.tree.reptile.tree.presentation.viewmodel.diary.EditDiaryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-class WriteDiaryFragment : BaseFragment<FragmentWriteDiaryBinding>() {
+@AndroidEntryPoint
+class EditDiaryFragment : BaseFragment<FragmentWriteDiaryBinding>() {
+    private val viewModel by viewModels<EditDiaryViewModel>()
+
     private val diaryAdapter by lazy {
-        DiaryAdapter()
+        EditDiaryAdapter()
     }
 
     private val onBackPressedCallback by lazy {
@@ -53,7 +54,9 @@ class WriteDiaryFragment : BaseFragment<FragmentWriteDiaryBinding>() {
 
             when(data.scheme) {
                 "content" -> {
-                    diaryAdapter.addPicture(data)
+                    writeFileToAppSpecificStorage(requireContext(), data)?.let {
+                        diaryAdapter.addImage(it)
+                    }
                 }
                 "file" -> {
 
@@ -77,7 +80,7 @@ class WriteDiaryFragment : BaseFragment<FragmentWriteDiaryBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bind()
-        diaryAdapter.addTextEditor()
+        diaryAdapter.addText()
     }
 
     override fun onDetach() {
@@ -95,13 +98,17 @@ class WriteDiaryFragment : BaseFragment<FragmentWriteDiaryBinding>() {
             }
 
             materialToolbar.setNavigationOnClickListener {
-                OnBackPressedEventBus.callOnBackPressed()
+                parentFragmentManager.popBackStackImmediate()
             }
 
             materialToolbar.setOnMenuItemClickListener {
                 when(it.itemId) {
                     R.id.menu_complete -> {
+                        viewModel.insertDiary(diaryAdapter.toDiary(parcelableProfile.id))
 
+                        delayOnLifecycle(120L) {
+                            parentFragmentManager.popBackStackImmediate()
+                        }
                         true
                     }
                     else -> false
@@ -142,12 +149,12 @@ class WriteDiaryFragment : BaseFragment<FragmentWriteDiaryBinding>() {
     }
 
     companion object {
-        fun newInstance(parcelableProfile: ParcelableProfile): WriteDiaryFragment {
+        fun newInstance(parcelableProfile: ParcelableProfile): EditDiaryFragment {
             val bundle = Bundle().apply {
                 putParcelable(Key.PARCELABLE_PROFILE, parcelableProfile)
             }
 
-            return WriteDiaryFragment().apply {
+            return EditDiaryFragment().apply {
                 arguments = bundle
             }
         }

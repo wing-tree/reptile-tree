@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.wing.tree.reptile.tree.presentation.Key
+import com.wing.tree.reptile.tree.presentation.constant.Key
 import com.wing.tree.reptile.tree.presentation.databinding.FragmentSingleChoiceDialogBinding
 import com.wing.tree.reptile.tree.presentation.databinding.SingleChoiceItemBinding
 

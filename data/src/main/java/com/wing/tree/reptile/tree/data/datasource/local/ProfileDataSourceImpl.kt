@@ -7,8 +7,8 @@ import javax.inject.Inject
 class ProfileDataSourceImpl @Inject constructor(
     private val database: Database
 ) : ProfileDataSource {
-    override suspend fun all(): List<Profile> {
-        return database.profileDao().all()
+    override suspend fun profileList(): List<Profile> {
+        return database.profileDao().profileList()
     }
 
     override suspend fun insert(profile: Profile) {

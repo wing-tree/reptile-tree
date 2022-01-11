@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import com.wing.tree.reptile.tree.presentation.R
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -38,6 +39,20 @@ abstract class BaseFragment<VB: ViewBinding> : Fragment() {
     override fun onDestroyView() {
         _viewBinding = null
         super.onDestroyView()
+    }
+
+    protected fun addFragment(fragment: Fragment) {
+        parentFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                android.R.anim.fade_in,
+                android.R.anim.fade_out,
+                android.R.anim.fade_in,
+                android.R.anim.fade_out,
+            )
+            .setReorderingAllowed(true)
+            .add(R.id.frame_layout_profile, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     protected fun delayOnLifecycle(

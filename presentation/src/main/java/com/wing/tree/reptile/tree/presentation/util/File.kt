@@ -1,4 +1,4 @@
-package com.wing.tree.reptile.tree.presentation
+package com.wing.tree.reptile.tree.presentation.util
 
 import android.content.Context
 import android.net.Uri
@@ -41,7 +41,7 @@ internal fun writeFileToAppSpecificStorage(context: Context, uri: Uri): File? {
     val b = ByteArray(len)
     var i: Int
 
-    while (inputStream.read(b, off, len).also { i = it } != -1) {
+    while (inputStream.read(b, off, len).also { i = it } > -1) {
         outputStream.write(b, off, i)
     }
 

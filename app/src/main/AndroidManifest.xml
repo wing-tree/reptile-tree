@@ -26,7 +26,7 @@
         <activity android:name=".presentation.view.profile.ProfileActivity"
             android:exported="true" />
 
-        <activity android:name=".presentation.view.diary.WriteDiaryFragment"
+        <activity android:name=".presentation.view.diary.EditDiaryFragment"
             android:exported="true" />
 
     </application>

@@ -1,7 +1,10 @@
 package com.wing.tree.reptile.tree.di
 
+import com.wing.tree.reptile.tree.domain.repository.DiaryRepository
 import com.wing.tree.reptile.tree.domain.repository.ProfileRepository
 import com.wing.tree.reptile.tree.domain.usecase.IOCoroutineDispatcher
+import com.wing.tree.reptile.tree.domain.usecase.diary.GetDiaryListUseCase
+import com.wing.tree.reptile.tree.domain.usecase.diary.InsertDiaryUseCase
 import com.wing.tree.reptile.tree.domain.usecase.profile.GetProfileListUseCase
 import com.wing.tree.reptile.tree.domain.usecase.profile.InsertProfileUseCase
 import dagger.Module
@@ -30,5 +33,23 @@ internal object UseCaseModule {
         @IOCoroutineDispatcher coroutineDispatcher: CoroutineDispatcher
     ): InsertProfileUseCase {
         return InsertProfileUseCase(profileRepository, coroutineDispatcher)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun providesGetDiaryListByIdUseCase(
+        diaryRepository: DiaryRepository,
+        @IOCoroutineDispatcher coroutineDispatcher: CoroutineDispatcher
+    ): GetDiaryListUseCase {
+        return GetDiaryListUseCase(diaryRepository, coroutineDispatcher)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun providesInsertDiaryUseCase(
+        diaryRepository: DiaryRepository,
+        @IOCoroutineDispatcher coroutineDispatcher: CoroutineDispatcher
+    ): InsertDiaryUseCase {
+        return InsertDiaryUseCase(diaryRepository, coroutineDispatcher)
     }
 }

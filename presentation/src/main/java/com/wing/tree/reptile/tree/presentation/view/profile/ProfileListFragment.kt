@@ -7,12 +7,11 @@ import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.wing.tree.reptile.tree.presentation.Extra
-import com.wing.tree.reptile.tree.presentation.TransitionName
+import com.wing.tree.reptile.tree.presentation.constant.Extra
+import com.wing.tree.reptile.tree.presentation.constant.TransitionName
 import com.wing.tree.reptile.tree.presentation.adapter.profile.ProfileListAdapter
 import com.wing.tree.reptile.tree.presentation.databinding.FragmentProfileListBinding
 import com.wing.tree.reptile.tree.presentation.parcelable.ParcelableProfile

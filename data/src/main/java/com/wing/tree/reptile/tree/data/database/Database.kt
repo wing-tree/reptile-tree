@@ -3,13 +3,16 @@ package com.wing.tree.reptile.tree.data.database
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.wing.tree.reptile.tree.data.dao.DiaryDao
 import com.wing.tree.reptile.tree.data.dao.ProfileDao
+import com.wing.tree.reptile.tree.data.entity.Diary
 import com.wing.tree.reptile.tree.data.entity.Profile
-import com.wing.tree.reptile.tree.data.typeconverters.TypeConverters
+import com.wing.tree.reptile.tree.data.typeconverter.TypeConverters
 
-@androidx.room.Database(entities = [Profile::class], exportSchema = false, version = 1)
+@androidx.room.Database(entities = [Diary::class, Profile::class], exportSchema = false, version = 1)
 @androidx.room.TypeConverters(TypeConverters::class)
 abstract class Database: RoomDatabase() {
+    abstract fun diaryDao(): DiaryDao
     abstract fun profileDao(): ProfileDao
 
     companion object {

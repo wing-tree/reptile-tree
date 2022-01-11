@@ -7,7 +7,7 @@ import com.wing.tree.reptile.tree.data.entity.Profile
 @Dao
 interface ProfileDao {
     @Query("SELECT * FROM profile")
-    suspend fun all(): List<Profile>
+    fun profileList(): List<Profile>
 
     @Insert(onConflict = REPLACE)
     suspend fun insert(profile: Profile)

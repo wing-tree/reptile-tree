@@ -2,7 +2,6 @@ package com.wing.tree.reptile.tree.presentation.viewmodel.profile
 
 import android.app.Application
 import android.net.Uri
-import androidx.annotation.MainThread
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,11 +18,8 @@ class CreateProfileViewModel @Inject constructor(
     private val insertProfileUseCase: InsertProfileUseCase,
     application: Application
 ) : AndroidViewModel(application) {
-    private val _profilePictureFileUri = MutableLiveData<Uri>()
-    val profilePictureFileUri: LiveData<Uri>
-        get() = _profilePictureFileUri
-
-
+    private val _imageFileUri = MutableLiveData<Uri>()
+    val imageFileUri: LiveData<Uri> get() = _imageFileUri
 
     fun insertProfile(profile: Profile) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -31,7 +27,7 @@ class CreateProfileViewModel @Inject constructor(
         }
     }
 
-    fun setProfilePictureFileUri(value: Uri) {
-        _profilePictureFileUri.value = value
+    fun setImageFileUri(value: Uri) {
+        _imageFileUri.value = value
     }
 }

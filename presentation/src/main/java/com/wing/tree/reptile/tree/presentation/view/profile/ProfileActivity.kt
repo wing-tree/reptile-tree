@@ -1,24 +1,26 @@
 package com.wing.tree.reptile.tree.presentation.view.profile
 
 import android.os.Bundle
-import android.transition.TransitionInflater
 import android.view.LayoutInflater
+import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.wing.tree.reptile.tree.domain.model.Profile
-import com.wing.tree.reptile.tree.presentation.Extra
 import com.wing.tree.reptile.tree.presentation.R
-import com.wing.tree.reptile.tree.presentation.TransitionName
+import com.wing.tree.reptile.tree.presentation.adapter.profile.DiaryListAdapter
+import com.wing.tree.reptile.tree.presentation.constant.Extra
+import com.wing.tree.reptile.tree.presentation.constant.TransitionName
 import com.wing.tree.reptile.tree.presentation.databinding.ActivityProfileBinding
-import com.wing.tree.reptile.tree.presentation.eventbus.OnBackPressedEventBus
 import com.wing.tree.reptile.tree.presentation.parcelable.ParcelableProfile
 import com.wing.tree.reptile.tree.presentation.view.base.BaseActivity
-import com.wing.tree.reptile.tree.presentation.view.diary.WriteDiaryFragment
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import timber.log.Timber
+import com.wing.tree.reptile.tree.presentation.view.base.LinearLayoutManagerWrapper
+import com.wing.tree.reptile.tree.presentation.view.diary.EditDiaryFragment
+import com.wing.tree.reptile.tree.presentation.viewmodel.profile.ProfileViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileActivity : BaseActivity<ActivityProfileBinding>() {
-    private val compositeDisposable = CompositeDisposable()
+    private val viewModel by viewModels<ProfileViewModel>()
+    private val diaryListAdapter = DiaryListAdapter()
 
     override fun inflate(inflater: LayoutInflater): ActivityProfileBinding {
         return ActivityProfileBinding.inflate(inflater)
@@ -26,58 +28,46 @@ class ProfileActivity : BaseActivity<ActivityProfileBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initData()
-        subscribe()
+        bind()
+        observe()
     }
 
-    override fun onDestroy() {
-        compositeDisposable.dispose()
-        super.onDestroy()
-    }
-
-    private fun initData() {
+    private fun bind() {
         val parcelableProfile = intent?.getParcelableExtra<ParcelableProfile>(Extra.PARCELABLE_PROFILE)
             ?: run {
-                finish()
-                return@initData
+                finishAfterTransition()
+                return@bind
             }
 
-        bind(parcelableProfile)
-    }
+        viewModel.profile = parcelableProfile
+        viewModel.diaryList(parcelableProfile.id)
 
-    private fun bind(parcelableProfile: ParcelableProfile) {
         with(viewBinding) {
             imageViewProfilePicture.transitionName = TransitionName.PROFILE_PHOTO
             textViewName.transitionName = TransitionName.NAME
 
             Glide.with(applicationContext)
-                .load(parcelableProfile.profilePictureUri)
+                .load(parcelableProfile.imageFilePath)
                 .transform(CenterCrop())
                 .into(imageViewProfilePicture)
 
             textViewName.text = parcelableProfile.name
 
+            recyclerViewDiary.apply {
+                adapter = diaryListAdapter
+                layoutManager = LinearLayoutManagerWrapper(context)
+                setHasFixedSize(true)
+            }
+
             imageViewAddDiary.setOnClickListener {
-                supportFragmentManager.beginTransaction()
-                    .setCustomAnimations(
-                        android.R.anim.fade_in,
-                        android.R.anim.fade_out,
-                        android.R.anim.fade_in,
-                        android.R.anim.fade_out,
-                    )
-                    .setReorderingAllowed(true)
-                    .replace(R.id.frame_layout_profile, WriteDiaryFragment.newInstance(parcelableProfile))
-                    .addToBackStack(null)
-                    .commit()
+                replaceFragment(EditDiaryFragment.newInstance(parcelableProfile))
             }
         }
     }
 
-    private fun subscribe() {
-        compositeDisposable.add(
-            OnBackPressedEventBus.subscribe().subscribe {
-                onBackPressed()
-            }
-        )
+    private fun observe() {
+        viewModel.diaryList.observe(this) {
+            diaryListAdapter.submitList(it)
+        }
     }
 }

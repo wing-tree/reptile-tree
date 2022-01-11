@@ -12,6 +12,6 @@ class GetProfileListUseCase @Inject constructor(
     @IOCoroutineDispatcher coroutineDispatcher: CoroutineDispatcher
 ) : UseCase<Unit, List<Profile>>(coroutineDispatcher) {
     override suspend fun execute(parameter: Unit): List<Profile> {
-        return profileRepository.all()
+        return profileRepository.profileList()
     }
 }

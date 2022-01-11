@@ -30,7 +30,7 @@ class ProfileListAdapter(
         fun bind(item: Profile) {
             with(viewBinding) {
                 Glide.with(imageViewProfilePicture)
-                    .load(item.profilePictureUri)
+                    .load(item.imageFilePath)
                     .centerCrop()
                     .into(imageViewProfilePicture)
 
